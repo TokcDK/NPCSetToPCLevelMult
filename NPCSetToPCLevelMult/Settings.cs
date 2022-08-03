@@ -37,5 +37,8 @@ namespace NPCSetToPCLevelMult
 
         [SettingName("Ignore all records which editor id contains any of this strings")]
         public List<string> IgnoreEDIDContains = new();
+
+        [SettingName("Debug mode")]
+        public bool IsDebug = false;
     }
 }

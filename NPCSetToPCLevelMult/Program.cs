@@ -90,7 +90,7 @@ namespace NPCSetToPCLevelMult
                     if (useIgnoreContainsList && ignoreContainsList.Any(s => edid.Contains(s, StringComparison.OrdinalIgnoreCase))) continue;
                     //-------------------------
 
-                    bool logMe = false;
+                    bool logMe = Settings.Value.IsDebug;
                     bool recalculateLevelMult = true;
                     var pcLevelMult = npcGetter.Configuration.Level as PcLevelMult;
                     bool isPcLevelMult = pcLevelMult != null;
