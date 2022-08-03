@@ -55,10 +55,7 @@ namespace NPCSetToPCLevelMult
             //var linkCache = state.LinkCache;
             foreach (var npcGetter in state.LoadOrder.PriorityOrder.Npc().WinningOverrides())
             {
-                if (npcGetter == null)
-                {
-                    continue;
-                }
+                if (npcGetter == null) continue;
 
                 //if (npcGetter.Name + "" == "Разбитые мечты")
                 //{
@@ -93,28 +90,20 @@ namespace NPCSetToPCLevelMult
                     if (useIgnoreContainsList && ignoreContainsList.Any(s => edid.Contains(s, StringComparison.OrdinalIgnoreCase))) continue;
                     //-------------------------
 
-                    bool logMe = true;
+                    bool logMe = false;
                     bool recalculateLevelMult = true;
                     var pcLevelMult = npcGetter.Configuration.Level as PcLevelMult;
                     bool isPcLevelMult = pcLevelMult != null;
 
-                    if (logMe)
-                    {
-                        Console.WriteLine("isPcLevelMult=" + isPcLevelMult);
-                    }
-                    if (isPcLevelMult && !recalculateLevelMult && npcGetter.Configuration.CalcMaxLevel == 0)
-                    {
-                        continue;
-                    }
+                    if (logMe) Console.WriteLine("isPcLevelMult=" + isPcLevelMult);
+                    if (isPcLevelMult && !recalculateLevelMult && npcGetter.Configuration.CalcMaxLevel == 0) continue;
 
                     bool isEssential = set1ForEssential && npcGetter.Configuration.Flags.HasFlag(NpcConfiguration.Flag.Essential);
                     bool isUnique = set1ForUnique && npcGetter.Configuration.Flags.HasFlag(NpcConfiguration.Flag.Unique);
 
                     Npc? npc;
                     var npcConfiguration = npcGetter.Configuration;
-#pragma warning disable CS8602 // !isPcLevelMult 
-                    if (isPcLevelMult && (isUnique || isEssential) && pcLevelMult.LevelMult == 1.0)
-#pragma warning restore CS8602 // 
+                    if (isPcLevelMult && (isUnique || isEssential) && pcLevelMult!.LevelMult == 1.0)
                     {
                         npc = state.PatchMod.Npcs.GetOrAddAsOverride(npcGetter);
                         npc.Configuration.CalcMaxLevel = 0; // just set max level for unique npc else calculate new
@@ -143,14 +132,9 @@ namespace NPCSetToPCLevelMult
                             //};
                             //npcLevel = npcLvl;
                             npcLevel = npcConfiguration.CalcMinLevel;
-#pragma warning disable CS8602 // !isPcLevelMult
-                            oldLevelMult = pcLevelMult.LevelMult;
-#pragma warning restore CS8602 // 
+                            oldLevelMult = pcLevelMult!.LevelMult;
                         }
-                        else
-                        {
-                            continue;
-                        }
+                        else continue;
                     }
 
                     bool changed = false;
@@ -171,27 +155,21 @@ namespace NPCSetToPCLevelMult
                     {
                         foreach (var wordValue in Settings.Value.EDIDWordsStaticMultiplierMods)
                         {
-                            if (edid.Contains(wordValue.Key, StringComparison.OrdinalIgnoreCase))
-                            {
-                                npcPcLevelMultDataLevelMult = wordValue.Value;
-                                changed = true;
-                                skipMultCalculate = true;
-                                if (logMe)
-                                {
-                                    Console.WriteLine("Mult by static word:" + npcPcLevelMultDataLevelMult);
-                                }
-                                break;
-                            }
+                            if (!edid.Contains(wordValue.Key, StringComparison.OrdinalIgnoreCase)) continue;
+
+                            npcPcLevelMultDataLevelMult = wordValue.Value;
+                            changed = true;
+                            skipMultCalculate = true;
+                            if (logMe) Console.WriteLine("Mult by static word:" + npcPcLevelMultDataLevelMult);
+                            break;
                         }
                     }
 
                     // player potential follower or marriable has 1.0 mult
                     if (!skipMultCalculate && npcGetter.Factions.Count > 0 && npcGetter.Factions.Any(f => f.Faction == Skyrim.Faction.PotentialFollowerFaction || f.Faction == Skyrim.Faction.CurrentFollowerFaction || f.Faction == Skyrim.Faction.PlayerFaction || f.Faction == Skyrim.Faction.PotentialMarriageFaction))
                     {
-                        if (logMe)
-                        {
-                            Console.WriteLine("mult set by faction to 1.0");
-                        }
+                        if (logMe) Console.WriteLine("mult set by faction to 1.0");
+
                         npcPcLevelMultDataLevelMult = 1.0F;
                         skipMultCalculate = true;
                         changed = true;
@@ -204,26 +182,17 @@ namespace NPCSetToPCLevelMult
                     {
                         if (skipMultCalculate)
                         {
-                            if (logMe)
-                            {
-                                Console.WriteLine("skipMultCalculate: mult is " + npcPcLevelMultDataLevelMult);
-                            }
+                            if (logMe) Console.WriteLine("skipMultCalculate: mult is " + npcPcLevelMultDataLevelMult);
                         }
                         else if (isUnique)
                         {
-                            if (logMe)
-                            {
-                                Console.WriteLine("isUnique: Mult set to" + Settings.Value.Mult1IfUnique);
-                            }
+                            if (logMe) Console.WriteLine("isUnique: Mult set to" + Settings.Value.Mult1IfUnique);
                             npcPcLevelMultDataLevelMult = Settings.Value.Mult1IfUnique;
                             changed = true;
                         }
                         else if (isEssential)
                         {
-                            if (logMe)
-                            {
-                                Console.WriteLine("isEssential: Mult set to" + Settings.Value.Mult1IfEssential);
-                            }
+                            if (logMe) Console.WriteLine("isEssential: Mult set to" + Settings.Value.Mult1IfEssential);
                             npcPcLevelMultDataLevelMult = Settings.Value.Mult1IfEssential;
                             changed = true;
                         }
@@ -238,10 +207,7 @@ namespace NPCSetToPCLevelMult
                                 {
                                     npcPcLevelMultDataLevelMult = pair.Value;
                                     changed = true;
-                                    if (logMe)
-                                    {
-                                        Console.WriteLine("Mult by level max:" + npcPcLevelMultDataLevelMult);
-                                    }
+                                    if (logMe) Console.WriteLine("Mult by level max:" + npcPcLevelMultDataLevelMult);
                                     break;
                                 }
                             }
@@ -252,73 +218,49 @@ namespace NPCSetToPCLevelMult
                             {
                                 npcPcLevelMultDataLevelMult = 0.1F;
                                 changed = true;
-                                if (logMe)
-                                {
-                                    Console.WriteLine("Mult by level <3:" + npcPcLevelMultDataLevelMult);
-                                }
+                                if (logMe) Console.WriteLine("Mult by level <3:" + npcPcLevelMultDataLevelMult);
                             }
                             else if (npcLevel < 5)
                             {
                                 npcPcLevelMultDataLevelMult = 0.2F;
                                 changed = true;
-                                if (logMe)
-                                {
-                                    Console.WriteLine("Mult by level <5:" + npcPcLevelMultDataLevelMult);
-                                }
+                                if (logMe) Console.WriteLine("Mult by level <5:" + npcPcLevelMultDataLevelMult);
                             }
                             else if (npcLevel < 7)
                             {
                                 npcPcLevelMultDataLevelMult = 0.5F;
                                 changed = true;
-                                if (logMe)
-                                {
-                                    Console.WriteLine("Mult by level <7:" + npcPcLevelMultDataLevelMult);
-                                }
+                                if (logMe) Console.WriteLine("Mult by level <7:" + npcPcLevelMultDataLevelMult);
                             }
                             else if (npcLevel < 15)
                             {
                                 npcPcLevelMultDataLevelMult = 0.8F;
                                 changed = true;
-                                if (logMe)
-                                {
-                                    Console.WriteLine("Mult by level <15:" + npcPcLevelMultDataLevelMult);
-                                }
+                                if (logMe) Console.WriteLine("Mult by level <15:" + npcPcLevelMultDataLevelMult);
                             }
                             else if (npcLevel < 25)
                             {
                                 npcPcLevelMultDataLevelMult = 0.9F;
                                 changed = true;
-                                if (logMe)
-                                {
-                                    Console.WriteLine("Mult by level <25:" + npcPcLevelMultDataLevelMult);
-                                }
+                                if (logMe) Console.WriteLine("Mult by level <25:" + npcPcLevelMultDataLevelMult);
                             }
                             else if (npcLevel < 31)
                             {
                                 npcPcLevelMultDataLevelMult = 1.0F;
                                 changed = true;
-                                if (logMe)
-                                {
-                                    Console.WriteLine("Mult by level <31:" + npcPcLevelMultDataLevelMult);
-                                }
+                                if (logMe) Console.WriteLine("Mult by level <31:" + npcPcLevelMultDataLevelMult);
                             }
                             else if (npcLevel < 41)
                             {
                                 npcPcLevelMultDataLevelMult = 1.1F;
                                 changed = true;
-                                if (logMe)
-                                {
-                                    Console.WriteLine("Mult by level <41:" + npcPcLevelMultDataLevelMult);
-                                }
+                                if (logMe) Console.WriteLine("Mult by level <41:" + npcPcLevelMultDataLevelMult);
                             }
                             else
                             {
                                 npcPcLevelMultDataLevelMult = 1.2F;
                                 changed = true;
-                                if (logMe)
-                                {
-                                    Console.WriteLine("Mult by level >40:" + npcPcLevelMultDataLevelMult);
-                                }
+                                if (logMe) Console.WriteLine("Mult by level >40:" + npcPcLevelMultDataLevelMult);
                             }
                         }
                     }
@@ -326,10 +268,7 @@ namespace NPCSetToPCLevelMult
 
                     if (isEssential || isUnique || skipMultCalculate)
                     {
-                        if (logMe)
-                        {
-                            Console.WriteLine("skip mult calc: isEssential="+ isEssential+ ",isUnique="+ isUnique+ ",skipMultCalculate=" + skipMultCalculate);
-                        }
+                        if (logMe) Console.WriteLine("skip mult calc: isEssential=" + isEssential + ",isUnique=" + isUnique + ",skipMultCalculate=" + skipMultCalculate);
                     }
                     else
                     {
@@ -337,16 +276,11 @@ namespace NPCSetToPCLevelMult
                         {
                             foreach (var wordValue in Settings.Value.EDIDWordsMultiplierMods)
                             {
-                                if (edid.Contains(wordValue.Key, StringComparison.OrdinalIgnoreCase))
-                                {
-                                    npcPcLevelMultDataLevelMult += wordValue.Value;
-                                    changed = true;
-                                    if (logMe)
-                                    {
-                                        Console.WriteLine("Mult by words:" + npcPcLevelMultDataLevelMult);
-                                    }
-                                    break;
-                                }
+                                if (!edid.Contains(wordValue.Key, StringComparison.OrdinalIgnoreCase)) continue;
+                                npcPcLevelMultDataLevelMult += wordValue.Value;
+                                changed = true;
+                                if (logMe) Console.WriteLine("Mult by words:" + npcPcLevelMultDataLevelMult);
+                                break;
                             }
                         }
 
@@ -362,10 +296,7 @@ namespace NPCSetToPCLevelMult
                                 npcPcLevelMultDataLevelMult += Settings.Value.MultiplierModByHeight;
                                 changed = true;
                             }
-                            if (logMe)
-                            {
-                                Console.WriteLine("Mult after Height check:" + npcPcLevelMultDataLevelMult);
-                            }
+                            if (logMe) Console.WriteLine("Mult after Height check:" + npcPcLevelMultDataLevelMult);
                         }
 
 
@@ -390,35 +321,23 @@ namespace NPCSetToPCLevelMult
 
                     if (isPcLevelMult && changed && npcPcLevelMultDataLevelMult < preChangeData[0])
                     {
-                        if (logMe)
-                        {
-                            Console.WriteLine("Mult "+ npcPcLevelMultDataLevelMult + " set to prechanged:" + preChangeData[0]);
-                        }
+                        if (logMe) Console.WriteLine("Mult " + npcPcLevelMultDataLevelMult + " set to prechanged:" + preChangeData[0]);
                         npcPcLevelMultDataLevelMult = preChangeData[0];
                     }
 
                     if (npcPcLevelMultDataLevelMult < minMultiplier)
                     {
-                        if (logMe)
-                        {
-                            Console.WriteLine("Mult is" + npcPcLevelMultDataLevelMult + ", below min "+ minMultiplier+", set to min");
-                        }
+                        if (logMe) Console.WriteLine("Mult is" + npcPcLevelMultDataLevelMult + ", below min " + minMultiplier + ", set to min");
                         npcPcLevelMultData.LevelMult = minMultiplier;
                     }
                     else if (npcPcLevelMultDataLevelMult > maxMultiplier)
                     {
-                        if (logMe)
-                        {
-                            Console.WriteLine("Mult is" + npcPcLevelMultDataLevelMult + ", above max " + maxMultiplier + ", set to max");
-                        }
+                        if (logMe) Console.WriteLine("Mult is" + npcPcLevelMultDataLevelMult + ", above max " + maxMultiplier + ", set to max");
                         npcPcLevelMultData.LevelMult = maxMultiplier;
                     }
                     else
                     {
-                        if (logMe)
-                        {
-                            Console.WriteLine("Mult set to " + npcPcLevelMultDataLevelMult);
-                        }
+                        if (logMe) Console.WriteLine("Mult set to " + npcPcLevelMultDataLevelMult);
                         npcPcLevelMultData.LevelMult = npcPcLevelMultDataLevelMult;
                     }
 
@@ -427,17 +346,11 @@ namespace NPCSetToPCLevelMult
                     bool b3 = preChangeData[1] != npcLevel;
                     bool b4 = preChangeData[2] != Settings.Value.MaxLevelCalc;
 
-                    if (logMe)
-                    {
-                        Console.WriteLine("b1=" + b1+",b2="+b2+",b3="+b3+",b4="+b4+ ",changed=" + changed);
-                    }
+                    if (logMe) Console.WriteLine("b1=" + b1 + ",b2=" + b2 + ",b3=" + b3 + ",b4=" + b4 + ",changed=" + changed);
 
                     if (b1 || (changed && (b2 || b3 || b4))) // patch only if mult or min level changed
                     {
-                        if (logMe)
-                        {
-                            Console.WriteLine("Result mult:" + npcPcLevelMultData.LevelMult + "\r\n");
-                        }
+                        if (logMe) Console.WriteLine("Result mult:" + npcPcLevelMultData.LevelMult + "\r\n");
 
                         // patch record
                         npc = state.PatchMod.Npcs.GetOrAddAsOverride(npcGetter);
@@ -447,10 +360,7 @@ namespace NPCSetToPCLevelMult
                     }
                     else
                     {
-                        if (logMe)
-                        {
-                            Console.WriteLine("Result mult is not applied:" + npcPcLevelMultDataLevelMult + "\r\n");
-                        }
+                        if (logMe) Console.WriteLine("Result mult is not applied:" + npcPcLevelMultDataLevelMult + "\r\n");
                     }
                 }
                 catch (Exception ex)
