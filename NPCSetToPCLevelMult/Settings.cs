@@ -45,7 +45,24 @@ namespace NPCSetToPCLevelMult
         [SynthesisOrder]
         //[SynthesisSettingName("NPC level multiplier")]
         [SynthesisTooltip("Comment for the record")]
-        public string Comment="";
+        public string Comment = "";
+    }
+
+    public class LevelMultByRaceData
+    {
+        [SynthesisOrder]
+        [SynthesisSettingName("Target race")]
+        [SynthesisTooltip("Race for which set multiplier. See parent description.")]
+        public IFormLinkGetter<IRaceGetter>? Race;
+
+        [SynthesisOrder]
+        [SynthesisSettingName("NPC level multiplier")]
+        [SynthesisTooltip("NPC level multiplier for the race. See parent description.")]
+        public float LevelMultiplier;
+
+        [SynthesisOrder]
+        [SynthesisTooltip("Comment for the record")]
+        public string Comment = "";
     }
 
     public class Settings
@@ -75,15 +92,15 @@ namespace NPCSetToPCLevelMult
         [SynthesisTooltip($"Priority higher of {nameof(MaxLevelMultiplier)}. Maximum allowed value of level multiplier after all calculations is npc has the class. Any higher of it will be reverted to it. Cant be lower of 0.1")]
         public HashSet<LevelMultByFormkeyData> MaxLvMultClass = new()
         {
-            new LevelMultByFormkeyData(){ FormKey=FormKey.Factory("01326B:Skyrim.esm"), LevelMultiplier=0.7F, Comment="Citizen class" }, // Citizen class
+            new LevelMultByFormkeyData(){ FormKey=FormKey.Factory("01326B:Skyrim.esm"), LevelMultiplier=0.7F, Comment="Citizen class is weaker" }, // Citizen class
         };
 
         [SynthesisOrder]
         //[SynthesisSettingName("Max allowed level mult for npc race")]
         [SynthesisTooltip($"Priority higher of {nameof(MaxLevelMultiplier)} && {nameof(MaxLvMultClass)}. Maximum allowed value of level multiplier after all calculations is npc has the race. Any higher of it will be reverted to it. Cant be lower of 0.1")]
-        public HashSet<LevelMultByFormkeyData> MaxLvMultRace = new()
+        public HashSet<LevelMultByRaceData> MaxLvMultRace = new()
         {
-            new LevelMultByFormkeyData(){ FormKey=FormKey.Factory("067CD8:Skyrim.esm"), LevelMultiplier=0.5F, Comment="Elder race" }, // Elder race
+            new LevelMultByRaceData(){ Race=new FormLink<IRaceGetter>(FormKey.Factory("067CD8:Skyrim.esm")), LevelMultiplier=0.5F, Comment="Elder race is weaker" }, // Elder race
         };
 
         [SynthesisOrder]
