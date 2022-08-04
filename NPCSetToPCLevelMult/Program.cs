@@ -39,14 +39,14 @@ namespace NPCSetToPCLevelMult
 
             float minMultiplier = Settings.Value.MinLevelMultiplier > 0 ? Settings.Value.MinLevelMultiplier : 0.1F; // hardcoded min is 0.1
             float maxMultiplier = Settings.Value.MaxLevelMultiplier > 0 ? Settings.Value.MaxLevelMultiplier : 1.2F; // hardcoded max is 1.2
-            bool set1ForUnique = Settings.Value.Mult1IfUnique != 0.0F;
-            bool set1ForEssential = Settings.Value.Mult1IfEssential != 0.0F;
-            bool modByWords = Settings.Value.EDIDWordsMultiplierMods.Count > 0.0F;
-            bool modStaticByWords = Settings.Value.EDIDWordsStaticMultiplierMods.Count > 0.0F;
-            bool modByHeight = Settings.Value.MultiplierModByHeight != 0.0F;
-            bool mod4Cowardly = Settings.Value.MultiplierModForCowardly != 0.0F;
-            bool mod4Brave = Settings.Value.MultiplierModForBrave != 0.0F;
-            bool mod4Foolhardy = Settings.Value.MultiplierModForFoolhardy != 0.0F;
+            bool set1ForUnique = Settings.Value.StaticMult4Unique != 0.0F;
+            bool set1ForEssential = Settings.Value.StaticMult4Essential != 0.0F;
+            bool modByWords = Settings.Value.MultMods.Count > 0.0F;
+            bool modStaticByWords = Settings.Value.StaticMultMods.Count > 0.0F;
+            bool modByHeight = Settings.Value.MultModByHeight != 0.0F;
+            bool mod4Cowardly = Settings.Value.MultMod4Cowardly != 0.0F;
+            bool mod4Brave = Settings.Value.MultMod4Brave != 0.0F;
+            bool mod4Foolhardy = Settings.Value.MultMod4Foolhardy != 0.0F;
 
             bool useCustomLevelsSetup = Settings.Value.MultByLevelPairs.Count > 0;
             var multByLevelPairByLevelAscending = useCustomLevelsSetup ? from entry in Settings.Value.MultByLevelPairs orderby entry.MaxLevel ascending select entry : null;
@@ -139,7 +139,7 @@ namespace NPCSetToPCLevelMult
                     bool skipMultCalculate = isPcLevelMult && npcConfiguration.CalcMinLevel == 0 && npcConfiguration.CalcMaxLevel == 0; // skip records where min and max level equal 0
                     if (!skipMultCalculate && modStaticByWords)
                     {
-                        foreach (var wordValue in Settings.Value.EDIDWordsStaticMultiplierMods)
+                        foreach (var wordValue in Settings.Value.StaticMultMods)
                         {
                             if (!edid.Contains(wordValue.KeyWord, StringComparison.OrdinalIgnoreCase)) continue;
 
@@ -170,14 +170,14 @@ namespace NPCSetToPCLevelMult
                         }
                         else if (isUnique)
                         {
-                            if (logMe) Console.WriteLine("isUnique: Mult set to" + Settings.Value.Mult1IfUnique);
-                            npcPcLevelMultDataLevelMult = Settings.Value.Mult1IfUnique;
+                            if (logMe) Console.WriteLine("isUnique: Mult set to" + Settings.Value.StaticMult4Unique);
+                            npcPcLevelMultDataLevelMult = Settings.Value.StaticMult4Unique;
                             changed = true;
                         }
                         else if (isEssential)
                         {
-                            if (logMe) Console.WriteLine("isEssential: Mult set to" + Settings.Value.Mult1IfEssential);
-                            npcPcLevelMultDataLevelMult = Settings.Value.Mult1IfEssential;
+                            if (logMe) Console.WriteLine("isEssential: Mult set to" + Settings.Value.StaticMult4Essential);
+                            npcPcLevelMultDataLevelMult = Settings.Value.StaticMult4Essential;
                             changed = true;
                         }
                     }
@@ -258,7 +258,7 @@ namespace NPCSetToPCLevelMult
                     {
                         if (modByWords)
                         {
-                            foreach (var wordValue in Settings.Value.EDIDWordsMultiplierMods)
+                            foreach (var wordValue in Settings.Value.MultMods)
                             {
                                 if (!edid.Contains(wordValue.KeyWord, StringComparison.OrdinalIgnoreCase)) continue;
                                 npcPcLevelMultDataLevelMult += wordValue.LevelMultiplier;
@@ -272,12 +272,12 @@ namespace NPCSetToPCLevelMult
                         {
                             if (npcGetter.Height < 0.8)
                             {
-                                npcPcLevelMultDataLevelMult -= Settings.Value.MultiplierModByHeight;
+                                npcPcLevelMultDataLevelMult -= Settings.Value.MultModByHeight;
                                 changed = true;
                             }
                             else if (npcGetter.Height > 1.2)
                             {
-                                npcPcLevelMultDataLevelMult += Settings.Value.MultiplierModByHeight;
+                                npcPcLevelMultDataLevelMult += Settings.Value.MultModByHeight;
                                 changed = true;
                             }
                             if (logMe) Console.WriteLine("Mult after Height check:" + npcPcLevelMultDataLevelMult);
@@ -288,17 +288,17 @@ namespace NPCSetToPCLevelMult
                         {
                             if (mod4Cowardly && npcGetter.AIData.Confidence.HasFlag(Confidence.Cowardly))
                             {
-                                npcPcLevelMultDataLevelMult += Settings.Value.MultiplierModForCowardly;
+                                npcPcLevelMultDataLevelMult += Settings.Value.MultMod4Cowardly;
                                 changed = true;
                             }
                             else if (mod4Brave && npcGetter.AIData.Confidence.HasFlag(Confidence.Brave))
                             {
-                                npcPcLevelMultDataLevelMult += Settings.Value.MultiplierModForBrave;
+                                npcPcLevelMultDataLevelMult += Settings.Value.MultMod4Brave;
                                 changed = true;
                             }
                             else if (mod4Foolhardy && npcGetter.AIData.Confidence.HasFlag(Confidence.Foolhardy))
                             {
-                                npcPcLevelMultDataLevelMult += Settings.Value.MultiplierModForFoolhardy;
+                                npcPcLevelMultDataLevelMult += Settings.Value.MultMod4Foolhardy;
                                 changed = true;
                             }
 
