@@ -1,5 +1,5 @@
 {
-  "Nickname": "NPCSetToPCLevelMult",
+  "Nickname": "NPCSetToPCLevelMult-local",
   "Visibility": "Visible",
   "OneLineDescription": "Autoset max level to unlimited and set level multiplier based on selected patcher settings",
   "LongDescription": "It set npc level to unlimited but alse set level multiplier, using exist npc parameters and patcher settings\n\nExamples:\nexample 1. Bandit-boss which have high min level, will be with unlimited max level and multiplier 1.2 to be always stronger of player.\n--example 2. Rabbit have a low min level and even if max level is unlimited, mult will be 0.1 or kind of and the rabbit willl be always weak. It made so to let player even on high levels be possible to fill small soul gems from weak creatures.\n\nClick on Settings to see all parameters",
