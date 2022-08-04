@@ -1,4 +1,5 @@
 ﻿using Mutagen.Bethesda.Plugins;
+using Mutagen.Bethesda.Skyrim;
 using Mutagen.Bethesda.Synthesis.Settings;
 using System.Collections.Generic;
 
@@ -40,6 +41,11 @@ namespace NPCSetToPCLevelMult
         [SynthesisSettingName("NPC level multiplier")]
         [SynthesisTooltip("NPC level multiplier for the Formkey. See parent description.")]
         public float LevelMultiplier;
+
+        [SynthesisOrder]
+        //[SynthesisSettingName("NPC level multiplier")]
+        [SynthesisTooltip("Comment for the record")]
+        public string Comment="";
     }
 
     public class Settings
@@ -69,7 +75,7 @@ namespace NPCSetToPCLevelMult
         [SynthesisTooltip($"Priority higher of {nameof(MaxLevelMultiplier)}. Maximum allowed value of level multiplier after all calculations is npc has the class. Any higher of it will be reverted to it. Cant be lower of 0.1")]
         public HashSet<LevelMultByFormkeyData> MaxLvMultClass = new()
         {
-            new LevelMultByFormkeyData(){ FormKey=FormKey.Factory("01326B:Skyrim.esm"), LevelMultiplier=0.7F }, // Citizen class
+            new LevelMultByFormkeyData(){ FormKey=FormKey.Factory("01326B:Skyrim.esm"), LevelMultiplier=0.7F, Comment="Citizen class" }, // Citizen class
         };
 
         [SynthesisOrder]
@@ -77,7 +83,7 @@ namespace NPCSetToPCLevelMult
         [SynthesisTooltip($"Priority higher of {nameof(MaxLevelMultiplier)} && {nameof(MaxLvMultClass)}. Maximum allowed value of level multiplier after all calculations is npc has the race. Any higher of it will be reverted to it. Cant be lower of 0.1")]
         public HashSet<LevelMultByFormkeyData> MaxLvMultRace = new()
         {
-            new LevelMultByFormkeyData(){ FormKey=FormKey.Factory("067CD8:Skyrim.esm"), LevelMultiplier=0.5F }, // Elder race
+            new LevelMultByFormkeyData(){ FormKey=FormKey.Factory("067CD8:Skyrim.esm"), LevelMultiplier=0.5F, Comment="Elder race" }, // Elder race
         };
 
         [SynthesisOrder]
