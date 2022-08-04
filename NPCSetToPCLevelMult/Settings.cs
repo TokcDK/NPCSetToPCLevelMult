@@ -65,7 +65,7 @@ namespace NPCSetToPCLevelMult
         public float MaxLevelMultiplier = 1.2F;
 
         [SynthesisOrder]
-        [SynthesisSettingName("Max allowed level mult for npc class")]
+        //[SynthesisSettingName("Max allowed level mult for npc class")]
         [SynthesisTooltip($"Priority higher of {nameof(MaxLevelMultiplier)}. Maximum allowed value of level multiplier after all calculations is npc has the class. Any higher of it will be reverted to it. Cant be lower of 0.1")]
         public HashSet<LevelMultByFormkeyData> MaxLvMultClass = new()
         {
@@ -73,7 +73,7 @@ namespace NPCSetToPCLevelMult
         };
 
         [SynthesisOrder]
-        [SynthesisSettingName("Max allowed level mult for npc race")]
+        //[SynthesisSettingName("Max allowed level mult for npc race")]
         [SynthesisTooltip($"Priority higher of {nameof(MaxLevelMultiplier)} && {nameof(MaxLvMultClass)}. Maximum allowed value of level multiplier after all calculations is npc has the race. Any higher of it will be reverted to it. Cant be lower of 0.1")]
         public HashSet<LevelMultByFormkeyData> MaxLvMultRace = new()
         {
