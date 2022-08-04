@@ -48,6 +48,23 @@ namespace NPCSetToPCLevelMult
         public string Comment = "";
     }
 
+    public class LevelMultByClassData
+    {
+        [SynthesisOrder]
+        [SynthesisSettingName("Target class")]
+        [SynthesisTooltip("Class for which set multiplier. See parent description.")]
+        public IFormLinkGetter<IClassGetter>? Class;
+
+        [SynthesisOrder]
+        [SynthesisSettingName("NPC level multiplier")]
+        [SynthesisTooltip("NPC level multiplier for the race. See parent description.")]
+        public float LevelMultiplier;
+
+        [SynthesisOrder]
+        [SynthesisTooltip("Comment for the record")]
+        public string Comment = "";
+    }
+
     public class LevelMultByRaceData
     {
         [SynthesisOrder]
@@ -90,9 +107,9 @@ namespace NPCSetToPCLevelMult
         [SynthesisOrder]
         //[SynthesisSettingName("Max allowed level mult for npc class")]
         [SynthesisTooltip($"Priority higher of {nameof(MaxLevelMultiplier)}. Maximum allowed value of level multiplier after all calculations is npc has the class. Any higher of it will be reverted to it. Cant be lower of 0.1")]
-        public HashSet<LevelMultByFormkeyData> MaxLvMultClass = new()
+        public HashSet<LevelMultByClassData> MaxLvMultClass = new()
         {
-            new LevelMultByFormkeyData(){ FormKey=FormKey.Factory("01326B:Skyrim.esm"), LevelMultiplier=0.7F, Comment="Citizen class is weaker" }, // Citizen class
+            new LevelMultByClassData(){ Class=new FormLink<IClassGetter>(FormKey.Factory("01326B:Skyrim.esm")), LevelMultiplier=0.7F, Comment="Citizen class is weaker" }, // Citizen class
         };
 
         [SynthesisOrder]

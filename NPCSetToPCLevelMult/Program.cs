@@ -39,7 +39,7 @@ namespace NPCSetToPCLevelMult
 
             float minMultiplier = Settings.Value.MinLevelMultiplier > 0 ? Settings.Value.MinLevelMultiplier : 0.1F; // hardcoded min is 0.1
             float maxMultiplier = Settings.Value.MaxLevelMultiplier > 0 ? Settings.Value.MaxLevelMultiplier : 1.2F; // hardcoded max is 1.2
-            bool useMaxMultiplierByClass = Settings.Value.MaxLvMultClass.Count > 0 && Settings.Value.MaxLvMultClass.Any(v => v != null && !v.FormKey.IsNull); // hardcoded max is 1.2
+            bool useMaxMultiplierByClass = Settings.Value.MaxLvMultClass.Count > 0 && Settings.Value.MaxLvMultClass.Any(v => v != null && v.Class != null && !v.Class.FormKey.IsNull); // hardcoded max is 1.2
             bool useMaxMultiplierByRace = Settings.Value.MaxLvMultRace.Count > 0 && Settings.Value.MaxLvMultRace.Any(v => v != null && v.Race != null && !v.Race.FormKey.IsNull); // hardcoded max is 1.2
             bool set1ForUnique = Settings.Value.StaticMult4Unique != 0.0F;
             bool set1ForEssential = Settings.Value.StaticMult4Essential != 0.0F;
@@ -373,7 +373,7 @@ namespace NPCSetToPCLevelMult
         private static bool HasClass(INpcGetter npcGetter, out float classMult)
         {
             classMult = 0;
-            var data = Settings.Value.MaxLvMultClass.First(v => v != null && !v.FormKey.IsNull && v.FormKey == npcGetter.Class.FormKey);
+            var data = Settings.Value.MaxLvMultClass.First(v => v != null && v.Class != null && !v.Class.FormKey.IsNull && v.Class.FormKey == npcGetter.Class.FormKey);
             if (data == null || data.LevelMultiplier <= 0) return false;
 
             classMult = data.LevelMultiplier;
@@ -383,7 +383,7 @@ namespace NPCSetToPCLevelMult
         private static bool HasRace(INpcGetter npcGetter, out float classMult)
         {
             classMult = 0;
-            var data = Settings.Value.MaxLvMultRace.First(v => v != null && v.Race!=null && !v.Race.FormKey.IsNull && v.Race == npcGetter.Race);
+            var data = Settings.Value.MaxLvMultRace.First(v => v != null && v.Race != null && !v.Race.FormKey.IsNull && v.Race == npcGetter.Race);
             if (data == null || data.LevelMultiplier <= 0) return false;
 
             classMult = data.LevelMultiplier;
