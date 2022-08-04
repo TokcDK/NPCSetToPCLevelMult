@@ -1,4 +1,5 @@
-﻿using Mutagen.Bethesda.Synthesis.Settings;
+﻿using Mutagen.Bethesda.Plugins;
+using Mutagen.Bethesda.Synthesis.Settings;
 using System.Collections.Generic;
 
 namespace NPCSetToPCLevelMult
@@ -19,13 +20,26 @@ namespace NPCSetToPCLevelMult
     {
         [SynthesisOrder]
         [SynthesisSettingName("Keyword string")]
-        [SynthesisTooltip("Part of npc Editor ID keyword string which can be in npc's editor id. See parent desxription.")]
+        [SynthesisTooltip("Part of npc Editor ID keyword string which can be in npc's editor id. See parent description.")]
         public string KeyWord = "partofeditorid";
 
         [SynthesisOrder]
         [SynthesisSettingName("NPC level multiplier")]
-        [SynthesisTooltip("NPC level multiplier for the keyword. See parent desxription.")]
+        [SynthesisTooltip("NPC level multiplier for the keyword. See parent description.")]
         public float LevelMultiplier = 1.0F;
+    }
+
+    public class LevelMultByFormkeyData
+    {
+        [SynthesisOrder]
+        [SynthesisSettingName("Target FormKey")]
+        [SynthesisTooltip("Formkey for which set multiplier. See parent description.")]
+        public FormKey FormKey;
+
+        [SynthesisOrder]
+        [SynthesisSettingName("NPC level multiplier")]
+        [SynthesisTooltip("NPC level multiplier for the Formkey. See parent description.")]
+        public float LevelMultiplier;
     }
 
     public class Settings
@@ -42,13 +56,21 @@ namespace NPCSetToPCLevelMult
 
         [SynthesisOrder]
         [SynthesisSettingName("Min allowed level mult")]
-        [SynthesisTooltip("Minimal allowed value of level multiplier after all calculations. Any lover of it will be reverted to it. Cant be lower of 0.1")]
+        [SynthesisTooltip("Minimal allowed value of level multiplier after all calculations. Any lower of it will be reverted to it. Cant be lower of 0.1")]
         public float MinLevelMultiplier = 0.1F;
 
         [SynthesisOrder]
         [SynthesisSettingName("Max allowed level mult")]
         [SynthesisTooltip("Maximal allowed value of level multiplier after all calculations. Any higher of it will be reverted to it.")]
         public float MaxLevelMultiplier = 1.2F;
+
+        [SynthesisOrder]
+        [SynthesisSettingName("Max allowed level mult for npc class")]
+        [SynthesisTooltip($"Priority higher of {nameof(MaxLevelMultiplier)}. Maximum allowed value of level multiplier after all calculations is npc has the class. Any higher of it will be reverted to it. Cant be lower of 0.1")]
+        public HashSet<LevelMultByFormkeyData> MaxLvMultClass = new()
+        {
+            new LevelMultByFormkeyData(){ FormKey=FormKey.Factory("01326B:Skyrim.esm"), LevelMultiplier=0.7F },
+        };
 
         [SynthesisOrder]
         [SynthesisSettingName("Force set unique npc mult")]
