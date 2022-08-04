@@ -69,7 +69,15 @@ namespace NPCSetToPCLevelMult
         [SynthesisTooltip($"Priority higher of {nameof(MaxLevelMultiplier)}. Maximum allowed value of level multiplier after all calculations is npc has the class. Any higher of it will be reverted to it. Cant be lower of 0.1")]
         public HashSet<LevelMultByFormkeyData> MaxLvMultClass = new()
         {
-            new LevelMultByFormkeyData(){ FormKey=FormKey.Factory("01326B:Skyrim.esm"), LevelMultiplier=0.7F },
+            new LevelMultByFormkeyData(){ FormKey=FormKey.Factory("01326B:Skyrim.esm"), LevelMultiplier=0.7F }, // Citizen class
+        };
+
+        [SynthesisOrder]
+        [SynthesisSettingName("Max allowed level mult for npc race")]
+        [SynthesisTooltip($"Priority higher of {nameof(MaxLevelMultiplier)} && {nameof(MaxLvMultClass)}. Maximum allowed value of level multiplier after all calculations is npc has the race. Any higher of it will be reverted to it. Cant be lower of 0.1")]
+        public HashSet<LevelMultByFormkeyData> MaxLvMultRace = new()
+        {
+            new LevelMultByFormkeyData(){ FormKey=FormKey.Factory("067CD8:Skyrim.esm"), LevelMultiplier=0.5F }, // Elder race
         };
 
         [SynthesisOrder]
