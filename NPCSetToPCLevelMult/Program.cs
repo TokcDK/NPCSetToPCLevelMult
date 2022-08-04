@@ -1,5 +1,6 @@
 using Mutagen.Bethesda;
 using Mutagen.Bethesda.FormKeys.SkyrimLE;
+using Mutagen.Bethesda.Plugins;
 using Mutagen.Bethesda.Skyrim;
 using Mutagen.Bethesda.Synthesis;
 using System;
@@ -98,8 +99,9 @@ namespace NPCSetToPCLevelMult
 
                     Npc? npc;
                     var npcConfiguration = npcGetter.Configuration;
-                    if (isPcLevelMult && (isUnique || isEssential) && pcLevelMult!.LevelMult == 1.0)
+                    if (isPcLevelMult && ((isUnique && pcLevelMult!.LevelMult == Settings.Value.StaticMult4Unique) || (isEssential && pcLevelMult!.LevelMult == Settings.Value.StaticMult4Essential)))
                     {
+                        if (logMe) Console.WriteLine($"Set level for unique/essential is {isPcLevelMult}, set max level to 0 and continue");
                         npc = state.PatchMod.Npcs.GetOrAddAsOverride(npcGetter);
                         npc.Configuration.CalcMaxLevel = 0; // just set max level for unique npc else calculate new
                         continue;
@@ -194,7 +196,7 @@ namespace NPCSetToPCLevelMult
                                 npcPcLevelMultDataLevelMult = pair.LevelMultiplier;
                                 changed = true;
 
-                                if (logMe) Console.WriteLine("Mult by level max:" + npcPcLevelMultDataLevelMult);
+                                if (logMe) Console.WriteLine($"Mult by level max:{npcPcLevelMultDataLevelMult}");
                                 break;
                             }
                         }
