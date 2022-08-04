@@ -63,7 +63,17 @@ namespace NPCSetToPCLevelMult
         [SynthesisOrder]
         //[SynthesisSettingName("Mult assigment by <max level\n")]
         [SynthesisTooltip("Set it from smaller to bigger. Default: <3=0.1,<5=0.2,<7=0.5,<15=0.8,<25=0.9,<31=1.0,<41=1.1,>40=1.2")]
-        public HashSet<MultByLevelPairsData> MultByLevelPairs = new();
+        public HashSet<MultByLevelPairsData> MultByLevelPairs = new()
+        {
+            new MultByLevelPairsData(){ MaxLevel=3,LevelMultiplier=0.1F },
+            new MultByLevelPairsData(){ MaxLevel=5,LevelMultiplier=0.2F },
+            new MultByLevelPairsData(){ MaxLevel=7,LevelMultiplier=0.5F },
+            new MultByLevelPairsData(){ MaxLevel=15,LevelMultiplier=0.8F },
+            new MultByLevelPairsData(){ MaxLevel=25,LevelMultiplier=0.9F },
+            new MultByLevelPairsData(){ MaxLevel=31,LevelMultiplier=1.0F },
+            new MultByLevelPairsData(){ MaxLevel=41,LevelMultiplier=1.1F },
+            new MultByLevelPairsData(){ MaxLevel=999,LevelMultiplier=1.2F },
+        };
 
         [SynthesisOrder]
         //[SynthesisSettingName("Static multiplier for npc by keyword\n")]
