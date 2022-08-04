@@ -28,6 +28,10 @@ namespace NPCSetToPCLevelMult
         [SynthesisSettingName("NPC level multiplier")]
         [SynthesisTooltip("NPC level multiplier for the keyword. See parent description.")]
         public float LevelMultiplier = 1.0F;
+
+        [SynthesisOrder]
+        [SynthesisTooltip("Comment for the record")]
+        public string Comment = "";
     }
 
     public class LevelMultByFormkeyData
@@ -150,7 +154,7 @@ namespace NPCSetToPCLevelMult
         [SynthesisTooltip("Static multiplier for npc that in their editor id have this keyword string. Example: keyword=alduin,mult=1.2")]
         public HashSet<KeyWordData> StaticMultMods = new()
         {
-            new KeyWordData(){ KeyWord="MQ106Alduin", LevelMultiplier=1.2F }
+            new KeyWordData(){ KeyWord="MQ106Alduin", LevelMultiplier=1.2F, Comment="Alduin is alwais stronger" }
         };
 
         [SynthesisOrder]
@@ -158,13 +162,17 @@ namespace NPCSetToPCLevelMult
         [SynthesisTooltip("When NPC's Editor ID contains entered Keyword, his result multiplier will be + entered level mult. Example 1: keyword=boss,mult=0.3,result 0.8+0.3=1.1 / Example 2: keyword=rabbit,mult=0.3,result 0.8+(-0.3)=0.5")]
         public HashSet<KeyWordData> MultMods = new()
         {
-            new KeyWordData(){ KeyWord="Boss",LevelMultiplier=0.3F },
             new KeyWordData(){ KeyWord="Matriarch",LevelMultiplier=0.3F },
             new KeyWordData(){ KeyWord="Patriarch",LevelMultiplier=0.3F },
+            new KeyWordData(){ KeyWord="Boss",LevelMultiplier=0.2F },
             new KeyWordData(){ KeyWord="Leader",LevelMultiplier=0.2F },
             new KeyWordData(){ KeyWord="Lord",LevelMultiplier=0.2F },
             new KeyWordData(){ KeyWord="Chief",LevelMultiplier=0.2F },
+            new KeyWordData(){ KeyWord="Dragon",LevelMultiplier=0.2F },
+            new KeyWordData(){ KeyWord="Giant",LevelMultiplier=0.2F },
+            new KeyWordData(){ KeyWord="Ogre",LevelMultiplier=0.2F },
             new KeyWordData(){ KeyWord="Captain",LevelMultiplier=0.15F },
+            new KeyWordData(){ KeyWord="Dread",LevelMultiplier=0.1F },
             new KeyWordData(){ KeyWord="Sergeant",LevelMultiplier=0.1F },
         };
 

@@ -373,7 +373,7 @@ namespace NPCSetToPCLevelMult
         private static bool HasClass(INpcGetter npcGetter, out float classMult)
         {
             classMult = 0;
-            var data = Settings.Value.MaxLvMultClass.First(v => v != null && v.Class != null && !v.Class.FormKey.IsNull && v.Class.FormKey == npcGetter.Class.FormKey);
+            var data = Settings.Value.MaxLvMultClass.FirstOrDefault(v => v != null && v.Class != null && !v.Class.FormKey.IsNull && v.Class.FormKey == npcGetter.Class.FormKey);
             if (data == null || data.LevelMultiplier <= 0) return false;
 
             classMult = data.LevelMultiplier;
@@ -383,7 +383,7 @@ namespace NPCSetToPCLevelMult
         private static bool HasRace(INpcGetter npcGetter, out float classMult)
         {
             classMult = 0;
-            var data = Settings.Value.MaxLvMultRace.First(v => v != null && v.Race != null && !v.Race.FormKey.IsNull && v.Race == npcGetter.Race);
+            var data = Settings.Value.MaxLvMultRace.FirstOrDefault(v => v != null && v.Race != null && !v.Race.FormKey.IsNull && v.Race.FormKey == npcGetter.Race.FormKey);
             if (data == null || data.LevelMultiplier <= 0) return false;
 
             classMult = data.LevelMultiplier;
