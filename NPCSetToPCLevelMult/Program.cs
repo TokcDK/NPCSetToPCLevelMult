@@ -1,8 +1,8 @@
 using Mutagen.Bethesda;
 using Mutagen.Bethesda.FormKeys.SkyrimLE;
-using Mutagen.Bethesda.Plugins;
 using Mutagen.Bethesda.Skyrim;
 using Mutagen.Bethesda.Synthesis;
+using StringCompareSettings;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -26,17 +26,8 @@ namespace NPCSetToPCLevelMult
 
         public static void RunPatch(IPatcherState<ISkyrimMod, ISkyrimModGetter> state)
         {
-            var ignoreEqualsList = Settings.Value.IgnoreEDIDEquals;
-            bool useIgnoreEqualsList = ignoreEqualsList.Count > 0;
-
-            var ignoreStartsWithList = Settings.Value.IgnoreEDIDStartsWith;
-            bool useIgnoreStartsWithList = ignoreStartsWithList.Count > 0;
-
-            var ignoreEndsWithList = Settings.Value.IgnoreEDIDStartsWith;
-            bool useIgnoreEndsWithList = ignoreEndsWithList.Count > 0;
-
-            var ignoreContainsList = Settings.Value.IgnoreEDIDStartsWith;
-            bool useIgnoreContainsList = ignoreContainsList.Count > 0;
+            var ignoreList = Settings.Value.IgnoreList;
+            StringCompareHelpers.IsUsingSkipList = ignoreList.Count > 0 && ignoreList.Any(s => !string.IsNullOrWhiteSpace(s.StringSetting.Name));
 
             float minMultiplier = Settings.Value.MinLevelMultiplier > 0 ? Settings.Value.MinLevelMultiplier : 0.1F; // hardcoded min is 0.1
             float maxMultiplier = Settings.Value.MaxLevelMultiplier > 0 ? Settings.Value.MaxLevelMultiplier : 1.2F; // hardcoded max is 1.2
@@ -60,30 +51,16 @@ namespace NPCSetToPCLevelMult
             {
                 if (npcGetter == null) continue;
 
+                var edid = npcGetter.EditorID;
+                if (string.IsNullOrWhiteSpace(edid)) continue;
+
                 try
                 {
-                    // ignore some records by edid
-                    var edid = npcGetter.EditorID + "";
-                    if (
-                        (!isPlayer && (isPlayer = edid == "Player"))
-                        ||
-                        edid.Contains("AudioTemplate")
-                        ||
-                        edid.Contains("VoiceType")
-                        ||
-                        edid.Contains("alePreset")
-                        ||
-                        edid.ToLowerInvariant().Contains("dummy")
-                        )
-                    {
-                        continue;
-                    }
-
                     // ignore by ignore lists
-                    if (useIgnoreEqualsList && ignoreEqualsList.Any(s => edid.ToUpperInvariant() == s.ToUpperInvariant())) continue;
-                    if (useIgnoreStartsWithList && ignoreStartsWithList.Any(s => edid.StartsWith(s, StringComparison.OrdinalIgnoreCase))) continue;
-                    if (useIgnoreEndsWithList && ignoreEndsWithList.Any(s => edid.EndsWith(s, StringComparison.OrdinalIgnoreCase))) continue;
-                    if (useIgnoreContainsList && ignoreContainsList.Any(s => edid.Contains(s, StringComparison.OrdinalIgnoreCase))) continue;
+                    if (npcGetter.Configuration.Flags.HasFlag(NpcConfiguration.Flag.IsCharGenFacePreset)) continue; // is chargen preset
+                    if (npcGetter.Template != null && !npcGetter.Template.IsNull && npcGetter.Configuration.TemplateFlags.HasFlag(NpcConfiguration.TemplateFlag.Script)) continue; // has template npc and use ithis script
+                    if (edid.IsInSkipList(ignoreList)) continue;
+
                     //-------------------------
 
                     bool logMe = Settings.Value.IsDebug;

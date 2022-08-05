@@ -1,6 +1,7 @@
 ﻿using Mutagen.Bethesda.Plugins;
 using Mutagen.Bethesda.Skyrim;
 using Mutagen.Bethesda.Synthesis.Settings;
+using StringCompareSettings;
 using System.Collections.Generic;
 
 namespace NPCSetToPCLevelMult
@@ -196,29 +197,17 @@ namespace NPCSetToPCLevelMult
         [SynthesisTooltip("Will mod multiplier by selected value if height of selected npc lower of 0.8/higher of 1.2")]
         public float MultModByHeight = 0.1F;
 
-        [SynthesisOrder]
-        [SynthesisSettingName("Ignore editorid list")]
-        [SynthesisTooltip("Ignore all records which editorid is equals to any of this string keywords")]
-        public HashSet<string> IgnoreEDIDEquals = new();
-
-        [SynthesisOrder]
-        [SynthesisSettingName("Ignore startswith keywords")]
-        [SynthesisTooltip("Ignore all records which editorid starts with any of this strings")]
-        public HashSet<string> IgnoreEDIDStartsWith = new()
+        [SynthesisTooltip("List of string keywords to skip npc by their editor id")]
+        public HashSet<StringCompareSettingContainer> IgnoreList = new()
         {
-            "CB2_",
-            "FSTest",
+            new StringCompareSettingContainer(){ StringSetting=new StringCompareSetting(){ Name="audiotemplate" } },
+            new StringCompareSettingContainer(){ StringSetting=new StringCompareSetting(){ Name="voicetype" } },
+            new StringCompareSettingContainer(){ StringSetting=new StringCompareSetting(){ Name="corpse", Comment="dont touch corpse npc" } },
+            new StringCompareSettingContainer(){ StringSetting=new StringCompareSetting(){ Name="dummy", Comment="some dummy npc" } },
+            new StringCompareSettingContainer(){ StringSetting=new StringCompareSetting(){ Name="preset", Comment="some preset npc" } },
+            new StringCompareSettingContainer(){ StringSetting=new StringCompareSetting(){ Name="cb2_", Compare=CompareType.StartsWith, Comment="dummy npc from 'Collector bags 2' mod" } },
+            new StringCompareSettingContainer(){ StringSetting=new StringCompareSetting(){ Name="fstest", Compare=CompareType.StartsWith, Comment="some test npc" } },
         };
-
-        [SynthesisOrder]
-        [SynthesisSettingName("Ignore endswith keywords")]
-        [SynthesisTooltip("Ignore all records which editor id ends with any of this strings")]
-        public HashSet<string> IgnoreEDIDEndsWith = new();
-
-        [SynthesisOrder]
-        [SynthesisSettingName("Ignore contains keywords")]
-        [SynthesisTooltip("Ignore all records which editor id contains any of this strings")]
-        public HashSet<string> IgnoreEDIDContains = new();
 
         [SynthesisOrder]
         [SynthesisSettingName("Debug mode")]
