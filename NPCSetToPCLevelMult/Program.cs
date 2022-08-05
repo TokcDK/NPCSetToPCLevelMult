@@ -32,13 +32,13 @@ namespace NPCSetToPCLevelMult
 
             float minMultiplier = Settings.Value.MinLevelMultiplier > 0 ? Settings.Value.MinLevelMultiplier : 0.1F; // hardcoded min is 0.1
             float maxMultiplier = Settings.Value.MaxLevelMultiplier > 0 ? Settings.Value.MaxLevelMultiplier : 1.2F; // hardcoded max is 1.2
-            bool useMaxMultiplierByClass = Settings.Value.MaxLvMultClass.Count > 0 && Settings.Value.MaxLvMultClass.Any(v => v != null && v.Class != null && !v.Class.FormKey.IsNull); // hardcoded max is 1.2
-            bool useMaxMultiplierByRace = Settings.Value.MaxLvMultRace.Count > 0 && Settings.Value.MaxLvMultRace.Any(v => v != null && v.Race != null && !v.Race.FormKey.IsNull); // hardcoded max is 1.2
-            bool set1ForUnique = Settings.Value.StaticMult4Unique != 0.0F;
-            bool set1ForEssential = Settings.Value.StaticMult4Essential != 0.0F;
-            bool modByWords = Settings.Value.MultMods.Count > 0.0F;
-            bool modStaticByWords = Settings.Value.StaticMultMods.Count > 0.0F;
-            bool modByHeight = Settings.Value.MultModByHeight != 0.0F;
+            bool isUseMaxMultiplierByClass = Settings.Value.MaxLvMultClass.Count > 0 && Settings.Value.MaxLvMultClass.Any(v => v != null && v.Class != null && !v.Class.FormKey.IsNull); // hardcoded max is 1.2
+            bool isUseMaxMultiplierByRace = Settings.Value.MaxLvMultRace.Count > 0 && Settings.Value.MaxLvMultRace.Any(v => v != null && v.Race != null && !v.Race.FormKey.IsNull); // hardcoded max is 1.2
+            bool canSet1ForUnique = Settings.Value.StaticMult4Unique != 0.0F;
+            bool canSet1ForEssential = Settings.Value.StaticMult4Essential != 0.0F;
+            bool hasModByWords = Settings.Value.MultMods.Count > 0.0F;
+            bool hasModStaticByWords = Settings.Value.StaticMultMods.Count > 0.0F;
+            bool hasModByHeight = Settings.Value.MultModByHeight != 0.0F;
             bool hasModByConfidence = Settings.Value.ModByConfidence.Any(kv => kv.Value != 0);
 
             bool useCustomLevelsSetup = Settings.Value.MultByLevelPairs.Count > 0;
@@ -47,6 +47,7 @@ namespace NPCSetToPCLevelMult
             bool isPlayerFound = false;
             FormKey playerFormKey = FormKey.Factory("000007:Skyrim.esm");
 
+            // for result message statistics
             int changedCount = 0;
             int changedByConfidence = 0;
             int changedByHeight = 0;
@@ -55,6 +56,7 @@ namespace NPCSetToPCLevelMult
             int changedByEssentialFlag = 0;
             int changedByKeywords = 0;
             int skippedByKeywords = 0;
+
             foreach (var npcGetter in state.LoadOrder.PriorityOrder.Npc().WinningOverrides())
             {
                 if (npcGetter == null) continue;
@@ -84,8 +86,8 @@ namespace NPCSetToPCLevelMult
                     if (logMe) Console.WriteLine("isPcLevelMult=" + isPcLevelMult);
                     if (isPcLevelMult && !recalculateLevelMult && npcGetter.Configuration.CalcMaxLevel == 0) continue;
 
-                    bool isEssential = set1ForEssential && npcGetter.Configuration.Flags.HasFlag(NpcConfiguration.Flag.Essential);
-                    bool isUnique = set1ForUnique && npcGetter.Configuration.Flags.HasFlag(NpcConfiguration.Flag.Unique);
+                    bool isEssential = canSet1ForEssential && npcGetter.Configuration.Flags.HasFlag(NpcConfiguration.Flag.Essential);
+                    bool isUnique = canSet1ForUnique && npcGetter.Configuration.Flags.HasFlag(NpcConfiguration.Flag.Unique);
 
                     Npc? npc;
                     var npcConfiguration = npcGetter.Configuration;
@@ -132,7 +134,7 @@ namespace NPCSetToPCLevelMult
 
                     float npcPcLevelMultDataLevelMult = oldLevelMult;
                     bool skipMultCalculate = isPcLevelMult && npcConfiguration.CalcMinLevel == 0 && npcConfiguration.CalcMaxLevel == 0; // skip records where min and max level equal 0
-                    if (!skipMultCalculate && modStaticByWords)
+                    if (!skipMultCalculate && hasModStaticByWords)
                     {
                         foreach (var wordValue in Settings.Value.StaticMultMods)
                         {
@@ -254,7 +256,7 @@ namespace NPCSetToPCLevelMult
                     }
                     else
                     {
-                        if (modByWords)
+                        if (hasModByWords)
                         {
                             foreach (var wordValue in Settings.Value.MultMods)
                             {
@@ -268,7 +270,7 @@ namespace NPCSetToPCLevelMult
                             }
                         }
 
-                        if (modByHeight)
+                        if (hasModByHeight)
                         {
                             if (npcGetter.Height < 0.8)
                             {
@@ -314,12 +316,12 @@ namespace NPCSetToPCLevelMult
                         if (logMe) Console.WriteLine("Mult is" + npcPcLevelMultDataLevelMult + ", below min " + minMultiplier + ", set to min");
                         npcPcLevelMultData.LevelMult = minMultiplier;
                     }
-                    else if (useMaxMultiplierByRace && HasRace(npcGetter, out float raceMult) && npcPcLevelMultDataLevelMult > raceMult)
+                    else if (isUseMaxMultiplierByRace && HasRace(npcGetter, out float raceMult) && npcPcLevelMultDataLevelMult > raceMult)
                     {
                         if (logMe) Console.WriteLine($"Mult is {npcPcLevelMultDataLevelMult}, above max {raceMult}, set to max");
                         npcPcLevelMultData.LevelMult = raceMult;
                     }
-                    else if (useMaxMultiplierByClass && HasClass(npcGetter, out float classMult) && npcPcLevelMultDataLevelMult > classMult)
+                    else if (isUseMaxMultiplierByClass && HasClass(npcGetter, out float classMult) && npcPcLevelMultDataLevelMult > classMult)
                     {
                         if (logMe) Console.WriteLine($"Mult is {npcPcLevelMultDataLevelMult}, above max {classMult}, set to max");
                         npcPcLevelMultData.LevelMult = classMult;
