@@ -38,9 +38,7 @@ namespace NPCSetToPCLevelMult
             bool modByWords = Settings.Value.MultMods.Count > 0.0F;
             bool modStaticByWords = Settings.Value.StaticMultMods.Count > 0.0F;
             bool modByHeight = Settings.Value.MultModByHeight != 0.0F;
-            bool mod4Cowardly = Settings.Value.MultMod4Cowardly != 0.0F;
-            bool mod4Brave = Settings.Value.MultMod4Brave != 0.0F;
-            bool mod4Foolhardy = Settings.Value.MultMod4Foolhardy != 0.0F;
+            bool hasModByConfidence = Settings.Value.ModByConfidence.Any(kv => kv.Value != 0);
 
             bool useCustomLevelsSetup = Settings.Value.MultByLevelPairs.Count > 0;
             var multByLevelPairByLevelAscending = useCustomLevelsSetup ? from entry in Settings.Value.MultByLevelPairs orderby entry.MaxLevel ascending select entry : null;
@@ -264,22 +262,16 @@ namespace NPCSetToPCLevelMult
                         }
 
 
-                        if (!npcConfiguration.TemplateFlags.HasFlag(NpcConfiguration.TemplateFlag.AIData))
+                        if (hasModByConfidence && !npcConfiguration.TemplateFlags.HasFlag(NpcConfiguration.TemplateFlag.AIData))
                         {
-                            if (mod4Cowardly && npcGetter.AIData.Confidence.HasFlag(Confidence.Cowardly))
+                            foreach(var flagMod in Settings.Value.ModByConfidence)
                             {
-                                npcPcLevelMultDataLevelMult += Settings.Value.MultMod4Cowardly;
-                                changed = true;
-                            }
-                            else if (mod4Brave && npcGetter.AIData.Confidence.HasFlag(Confidence.Brave))
-                            {
-                                npcPcLevelMultDataLevelMult += Settings.Value.MultMod4Brave;
-                                changed = true;
-                            }
-                            else if (mod4Foolhardy && npcGetter.AIData.Confidence.HasFlag(Confidence.Foolhardy))
-                            {
-                                npcPcLevelMultDataLevelMult += Settings.Value.MultMod4Foolhardy;
-                                changed = true;
+                                if (npcGetter.AIData.Confidence.HasFlag(flagMod.Key))
+                                {
+                                    npcPcLevelMultDataLevelMult += flagMod.Value;
+                                    changed = true;
+                                    break;
+                                }
                             }
 
                             if (logMe) Console.WriteLine("Mult after Confidence check:" + npcPcLevelMultDataLevelMult);
