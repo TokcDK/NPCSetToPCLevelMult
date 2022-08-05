@@ -47,6 +47,14 @@ namespace NPCSetToPCLevelMult
             bool isPlayerFound = false;
             FormKey playerFormKey = FormKey.Factory("000007:Skyrim.esm");
 
+            int changedCount = 0;
+            int changedByConfidence = 0;
+            int changedByHeight = 0;
+            int changedByStaticMult = 0;
+            int changedByUniqueFlag = 0;
+            int changedByEssentialFlag = 0;
+            int changedByKeywords = 0;
+            int skippedByKeywords = 0;
             foreach (var npcGetter in state.LoadOrder.PriorityOrder.Npc().WinningOverrides())
             {
                 if (npcGetter == null) continue;
@@ -64,7 +72,7 @@ namespace NPCSetToPCLevelMult
 
                     // ignore by ignore lists
                     if (npcGetter.Configuration.Flags.HasFlag(NpcConfiguration.Flag.IsCharGenFacePreset)) continue; // is chargen preset
-                    if (edid.IsInSkipList(ignoreList)) continue;
+                    if (edid.IsInSkipList(ignoreList)) { skippedByKeywords++; continue; }
 
                     //-------------------------
 
@@ -83,6 +91,7 @@ namespace NPCSetToPCLevelMult
                     var npcConfiguration = npcGetter.Configuration;
                     if (isPcLevelMult && ((isUnique && pcLevelMult!.LevelMult == Settings.Value.StaticMult4Unique) || (isEssential && pcLevelMult!.LevelMult == Settings.Value.StaticMult4Essential)))
                     {
+                        changedCount++;
                         if (logMe) Console.WriteLine($"Set level for unique/essential is {isPcLevelMult}, set max level to 0 and continue");
                         npc = state.PatchMod.Npcs.GetOrAddAsOverride(npcGetter);
                         npc.Configuration.CalcMaxLevel = 0; // just set max level for unique npc else calculate new
@@ -133,6 +142,7 @@ namespace NPCSetToPCLevelMult
                             changed = true;
                             skipMultCalculate = true;
                             if (logMe) Console.WriteLine("Mult by static word:" + npcPcLevelMultDataLevelMult);
+                            changedByStaticMult++;
                             break;
                         }
                     }
@@ -159,12 +169,14 @@ namespace NPCSetToPCLevelMult
                             if (logMe) Console.WriteLine("isUnique: Mult set to" + Settings.Value.StaticMult4Unique);
                             npcPcLevelMultDataLevelMult = Settings.Value.StaticMult4Unique;
                             changed = true;
+                            changedByUniqueFlag++;
                         }
                         else if (isEssential)
                         {
                             if (logMe) Console.WriteLine("isEssential: Mult set to" + Settings.Value.StaticMult4Essential);
                             npcPcLevelMultDataLevelMult = Settings.Value.StaticMult4Essential;
                             changed = true;
+                            changedByEssentialFlag++;
                         }
                     }
                     else
@@ -247,8 +259,10 @@ namespace NPCSetToPCLevelMult
                             foreach (var wordValue in Settings.Value.MultMods)
                             {
                                 if (!edid.Contains(wordValue.KeyWord, StringComparison.OrdinalIgnoreCase)) continue;
+
                                 npcPcLevelMultDataLevelMult += wordValue.LevelMultiplier;
                                 changed = true;
+                                changedByKeywords++;
                                 if (logMe) Console.WriteLine("Mult by words:" + npcPcLevelMultDataLevelMult);
                                 break;
                             }
@@ -260,11 +274,13 @@ namespace NPCSetToPCLevelMult
                             {
                                 npcPcLevelMultDataLevelMult -= Settings.Value.MultModByHeight;
                                 changed = true;
+                                changedByHeight++;
                             }
                             else if (npcGetter.Height > 1.2)
                             {
                                 npcPcLevelMultDataLevelMult += Settings.Value.MultModByHeight;
                                 changed = true;
+                                changedByHeight++;
                             }
                             if (logMe) Console.WriteLine("Mult after Height check:" + npcPcLevelMultDataLevelMult);
                         }
@@ -278,6 +294,7 @@ namespace NPCSetToPCLevelMult
                                 {
                                     npcPcLevelMultDataLevelMult += flagMod.Value;
                                     changed = true;
+                                    changedByConfidence++;
                                     break;
                                 }
                             }
@@ -327,6 +344,7 @@ namespace NPCSetToPCLevelMult
 
                     if (notIsPcLevelMult || (changed && (preNpcPcLevelMultDataLevelMult || preNpcLevel || preMaxLevelCalc))) // patch only if mult or min level changed
                     {
+                        changedCount++;
                         if (logMe) Console.WriteLine("Result mult:" + npcPcLevelMultData.LevelMult + "\r\n");
 
                         // patch record
@@ -346,6 +364,16 @@ namespace NPCSetToPCLevelMult
                     Console.WriteLine("An NullReferenceException error accured while parse npc '" + npcGetter.FormKey.ID + "'(" + npcGetter.EditorID + ":" + npcGetter.Name + ") Error:\r\n" + ex + "\r\n");
                 }
             }
+
+            Console.WriteLine($"Finished. Changed {changedCount} npcs:"
+                + $"\n By Unique flag: {changedByUniqueFlag}"
+                + $"\n By Essential flag: {changedByEssentialFlag}"
+                + $"\n By Confidence: {changedByConfidence}"
+                + $"\n By Height: {changedByHeight}"
+                + $"\n By keywords (static): {changedByStaticMult}"
+                + $"\n By Keywords: {changedByStaticMult}"
+                + $"\n Skipped by Keywords: {changedByStaticMult}"
+                );
         }
 
         private static bool HasClass(INpcGetter npcGetter, out float classMult)
