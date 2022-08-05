@@ -178,7 +178,7 @@ namespace NPCSetToPCLevelMult
         };
 
         [SynthesisOrder]
-        [SynthesisTooltip("Will change result multiplier by npc cnfidence flag.")]
+        [SynthesisSettingName("Multiplier mod by npc confidence flag equal. result mult+mod mult")]
         public Dictionary<Confidence, float> ModByConfidence = new()
         {
             {Confidence.Cowardly, -0.1F },
