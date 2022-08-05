@@ -58,7 +58,6 @@ namespace NPCSetToPCLevelMult
                 {
                     // ignore by ignore lists
                     if (npcGetter.Configuration.Flags.HasFlag(NpcConfiguration.Flag.IsCharGenFacePreset)) continue; // is chargen preset
-                    if (npcGetter.Template != null && !npcGetter.Template.IsNull && npcGetter.Configuration.TemplateFlags.HasFlag(NpcConfiguration.TemplateFlag.Script)) continue; // has template npc and use ithis script
                     if (edid.IsInSkipList(ignoreList)) continue;
 
                     //-------------------------
