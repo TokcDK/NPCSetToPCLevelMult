@@ -178,22 +178,22 @@ namespace NPCSetToPCLevelMult
         };
 
         [SynthesisOrder]
-        [SynthesisSettingName("Milt mod for Cowardly")]
+        [SynthesisSettingName("Mult mod for Cowardly")]
         [SynthesisTooltip("Will reduce multiplier by selected value if selected npc is Cowardly. Example: result 0.5 + default -0.1 = 0.4")]
         public float MultMod4Cowardly = -0.1F;
 
         [SynthesisOrder]
-        [SynthesisSettingName("Milt mod for Brave")]
+        [SynthesisSettingName("Mult mod for Brave")]
         [SynthesisTooltip("Will increase multiplier if npc is Brave. Example: result 0.5 + default 0.1 = 0.6")]
         public float MultMod4Brave = 0.1F;
 
         [SynthesisOrder]
-        [SynthesisSettingName("Milt mod for Foolhardy")]
+        [SynthesisSettingName("Mult mod for Foolhardy")]
         [SynthesisTooltip("Will increase multiplier if npc is Foolhardy. Example: result 0.5 + default 0.1 = 0.6")]
         public float MultMod4Foolhardy = 0.1F;
 
         [SynthesisOrder]
-        [SynthesisSettingName("Milt mod by height 0.8-/1.2+")]
+        [SynthesisSettingName("Mult mod by height 0.8-/1.2+")]
         [SynthesisTooltip("Will mod multiplier by selected value if height of selected npc lower of 0.8/higher of 1.2")]
         public float MultModByHeight = 0.1F;
 
