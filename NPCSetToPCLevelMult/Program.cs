@@ -1,5 +1,6 @@
 using Mutagen.Bethesda;
 using Mutagen.Bethesda.FormKeys.SkyrimLE;
+using Mutagen.Bethesda.Plugins;
 using Mutagen.Bethesda.Skyrim;
 using Mutagen.Bethesda.Synthesis;
 using StringCompareSettings;
@@ -43,7 +44,8 @@ namespace NPCSetToPCLevelMult
             bool useCustomLevelsSetup = Settings.Value.MultByLevelPairs.Count > 0;
             var multByLevelPairByLevelAscending = useCustomLevelsSetup ? from entry in Settings.Value.MultByLevelPairs orderby entry.MaxLevel ascending select entry : null;
 
-            bool isPlayer = false;
+            bool isPlayerFound = false;
+            FormKey playerFormKey = FormKey.Factory("000007:Skyrim.esm");
 
             foreach (var npcGetter in state.LoadOrder.PriorityOrder.Npc().WinningOverrides())
             {
@@ -54,6 +56,12 @@ namespace NPCSetToPCLevelMult
 
                 try
                 {
+                    if (!isPlayerFound && npcGetter.FormKey == playerFormKey)
+                    {
+                        isPlayerFound = true;
+                        continue;
+                    }
+
                     // ignore by ignore lists
                     if (npcGetter.Configuration.Flags.HasFlag(NpcConfiguration.Flag.IsCharGenFacePreset)) continue; // is chargen preset
                     if (edid.IsInSkipList(ignoreList)) continue;
